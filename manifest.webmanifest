@@ -1,6 +1,6 @@
 {
-  "name": "ENigma³",
-  "short_name": "ENigma3",
+  "name": "Enigma³",
+  "short_name": "Enigma3",
   "description": "AES-GCM text encryptor with QR and voice",
   "start_url": "./index.html",
   "display": "standalone",
