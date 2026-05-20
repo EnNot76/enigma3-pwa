@@ -509,7 +509,19 @@ button:active{
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function(reg) {
+        console.log("Service worker registered", reg.scope);
+      })
+      .catch(function(err) {
+        console.error("SW registration failed:", err);
+      });
+  });
+}
+</script>
 <script>
 const enc = new TextEncoder();
 const dec = new TextDecoder();
