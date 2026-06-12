@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 <title>Enigma³ Mobile</title>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#07070b">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/enigma-512.png">
+
 <style>
 :root{
   --bg-1:#07070b;
@@ -343,7 +349,7 @@ button:active{transform:translateY(0)}
   </div>
   <div id="qr-reader"></div>
   <div class="footer-note">
-    Enigma³ secure QR • © 2026 <span class="easter-trigger" onclick="toggleTerminal()">Enzo Notari</span> 
+    Enigma³ secure QR • © 2026 <span class="easter-trigger" onclick="toggleTerminal()">Enzo Notari</span>
   </div>
 </div>
 <div class="toast-wrap" id="toastWrap"></div>
@@ -353,6 +359,18 @@ button:active{transform:translateY(0)}
     <p>✔ AES-GCM 256-bit<br>✔ PBKDF2 120k iterations<br>✔ Random salt<br>✔ Random IV</p>
   </div>
 </div>
+
+<script>
+// PWA service worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .catch(err => console.error('SW registration failed', err));
+  });
+}
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
