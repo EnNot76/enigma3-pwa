@@ -202,7 +202,7 @@ textarea{min-height:110px;resize:vertical;line-height:1.35}
 .btn-row,.small-row{display:grid;gap:12px}
 .btn-row{grid-template-columns:1fr 1fr;margin-top:10px}
 .small-row{grid-template-columns:repeat(2, 1fr);margin-top:12px}
-.small-row-2{grid-template-columns:repeat(2, 1fr)}
+.small-row-2{grid-template-columns:repeat(3, 1fr)}
 .small-row-3{grid-template-columns:repeat(3, 1fr)}
 .small-row-4{grid-template-columns:repeat(2, 1fr)}
 button{
@@ -304,7 +304,7 @@ button:active{transform:translateY(0)}
   textarea{min-height:160px}
   .btn-row{grid-template-columns:1fr 1fr;margin-top:8px;gap:8px}
   .small-row{grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-  .small-row-2{grid-template-columns:1fr 1fr}
+  .small-row-2{grid-template-columns:3fr 1fr}
   .small-row-3{grid-template-columns:repeat(3, 1fr)}
   .small-row-4{grid-template-columns:1fr 1fr}
   button{min-height:50px;font-size:15px}
@@ -337,6 +337,7 @@ button:active{transform:translateY(0)}
   <div class="small-row small-row-2">
     <button class="small-btn" onclick="copyText()">COPY TEXT</button>
     <button class="small-btn" onclick="exportFile()">EXPORT TEXT</button>
+    <button class="small-btn" onclick="shareText()">SHARE TEXT</button>
   </div>
   <div class="small-row small-row-3">
     <button id="scanBtn" class="small-btn" onclick="startQRScan()">🔎 QR</button>
@@ -386,6 +387,21 @@ function showToast(message, type='ok'){
   wrap.appendChild(t);
   requestAnimationFrame(()=>t.classList.add('show'));
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),160)},1800);
+}
+
+function shareText(){
+  const data=document.getElementById('message').value;
+  if(!data){showToast('No text to share','err');return;}
+  if(navigator.share){
+    navigator.share({text:data})
+      .then(()=>showToast('Text shared ✔','ok'))
+      .catch(err=>{
+        if(err && err.name !== 'AbortError')
+          showToast('Share failed','err');
+      });
+  } else {
+    showToast('Share not supported on this device','err');
+  }
 }
 
 function generateQR(){
