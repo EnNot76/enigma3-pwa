@@ -1,963 +1,579 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#07070b">
-<link rel="icon" href="icons/enigma-klein.png">
-<link rel="apple-touch-icon" href="icons/enigma-klein.png">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ENigma³</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Enigma³ Mobile</title>
 <style>
 :root{
-    --bg-1:#07070b;
-    --bg-2:#10111a;
-    --bg-3:#1c1330;
-    --glass:rgba(255,255,255,0.08);
-    --border:rgba(255,215,130,0.24);
-    --gold:#d9b35b;
-    --gold-2:#f3d68a;
-    --text:#f5f2ea;
-    --muted:rgba(245,242,234,0.72);
-    --shadow:0 18px 50px rgba(0,0,0,0.45);
+  --bg-1:#07070b;
+  --bg-2:#10111a;
+  --bg-3:#1c1330;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,215,130,0.28);
+  --gold:#d9b35b;
+  --gold-2:#f3d68a;
+  --text:#f5f2ea;
+  --muted:rgba(245,242,234,0.72);
+  --shadow:0 18px 50px rgba(0,0,0,0.45);
 }
-
-*{
-    box-sizing:border-box;
-}
-
-html, body{
-    margin:0;
-    min-height:100%;
-}
-
+*{box-sizing:border-box}
+html,body{height:100%}
 body{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:14px 10px;
-    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--text);
-    background:
-        radial-gradient(circle at top left, rgba(217,179,91,0.16), transparent 26%),
-        radial-gradient(circle at top right, rgba(117,92,255,0.14), transparent 30%),
-        radial-gradient(circle at bottom, rgba(255,255,255,0.05), transparent 35%),
-        linear-gradient(135deg,var(--bg-1),var(--bg-2) 55%,var(--bg-3));
-    overflow-x:hidden;
-    overflow-y:auto;
-    position:relative;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(217,179,91,0.16), transparent 26%),
+    radial-gradient(circle at top right, rgba(117,92,255,0.14), transparent 30%),
+    radial-gradient(circle at bottom, rgba(255,255,255,0.05), transparent 35%),
+    linear-gradient(135deg,var(--bg-1),var(--bg-2) 55%,var(--bg-3));
+  overflow:hidden;
+  position:relative;
+  padding:14px;
 }
-
 body::before{
-    content:"";
-    position:fixed;
-    width:420px;
-    height:420px;
-    top:18%;
-    left:50%;
-    transform:translateX(-50%);
-    background:radial-gradient(circle at 30% 20%, rgba(243,214,138,0.30), transparent 55%),
-               radial-gradient(circle at 70% 80%, rgba(117,92,255,0.28), transparent 55%);
-    filter:blur(22px);
-    opacity:0.72;
-    animation:floatGlow 26s ease-in-out infinite alternate;
-    pointer-events:none;
+  content:"";
+  position:fixed;
+  width:520px;
+  height:520px;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background:radial-gradient(circle at 30% 20%, rgba(243,214,138,0.35), transparent 55%),
+             radial-gradient(circle at 70% 80%, rgba(117,92,255,0.35), transparent 55%);
+  filter:blur(22px);
+  opacity:0.7;
+  animation:floatGlow 26s ease-in-out infinite alternate;
+  pointer-events:none;
 }
-
 @keyframes floatGlow{
-    0%{ transform:translateX(-50%) scale(1); opacity:0.68; }
-    50%{ transform:translateX(-48%) scale(1.06); opacity:0.9; }
-    100%{ transform:translateX(-52%) scale(0.97); opacity:0.62; }
+  0%{transform:translate(-50%,-50%) scale(1);opacity:.7}
+  50%{transform:translate(-46%,-52%) scale(1.08);opacity:.9}
+  100%{transform:translate(-53%,-48%) scale(.96);opacity:.6}
 }
-
+@keyframes terminalFlash{
+  0%{filter:brightness(1) saturate(1)}
+  35%{filter:brightness(1.35) saturate(1.3)}
+  100%{filter:brightness(1) saturate(1)}
+}
 .container{
-    width:min(96vw, 390px);
-    padding:14px;
-    border-radius:18px;
-    background:var(--glass);
-    border:1px solid var(--border);
-    box-shadow:var(--shadow);
-    backdrop-filter:blur(16px) saturate(130%);
-    -webkit-backdrop-filter:blur(16px) saturate(130%);
-    position:relative;
-    z-index:1;
+  width:min(100%, 520px);
+  max-height:100vh;
+  overflow:auto;
+  padding:16px;
+  border-radius:26px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+  position:relative;
+  z-index:1;
 }
-
 .container::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:18px;
-    padding:1px;
-    background:linear-gradient(135deg,
-        rgba(255,255,255,0.22),
-        rgba(217,179,91,0.16),
-        rgba(255,255,255,0.06)
-    );
-    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;
-    mask-composite:exclude;
-    pointer-events:none;
+  content:"";
+  position:absolute; inset:0;
+  border-radius:26px;
+  padding:1px;
+  background:linear-gradient(135deg, rgba(255,255,255,0.25), rgba(217,179,91,0.18), rgba(255,255,255,0.06));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
 }
-
-.title-bar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:10px;
+.title-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.title-bar h2{margin:0;font-size:30px;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 18px rgba(217,179,91,0.15)}
+label{display:block;margin-top:10px;margin-bottom:6px;font-size:15px;color:var(--muted);letter-spacing:.4px}
+.input-box{position:relative}
+input,textarea{
+  width:100%;
+  padding:16px 16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(10,10,14,0.72);
+  color:var(--text);
+  outline:none;
+  font-size:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
 }
-
-.title-bar h2{
-    margin:0;
-    font-size:18px;
-    letter-spacing:1.8px;
-    text-transform:uppercase;
-    color:var(--text);
-    text-shadow:0 0 18px rgba(217,179,91,0.15);
-}
-
+input:focus,textarea:focus{border-color:rgba(217,179,91,0.55);box-shadow:0 0 0 3px rgba(217,179,91,0.14)}
+textarea{min-height:110px;resize:vertical;line-height:1.35}
 .info-dot{
-    width:12px;
-    height:12px;
-    border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #fff4c2, var(--gold) 55%, #8a6b2f 100%);
-    box-shadow:0 0 14px rgba(217,179,91,0.5);
-    cursor:pointer;
-    animation:pulseGold 1.8s infinite;
-    transition:transform .18s ease;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #fff4c2, var(--gold) 55%, #8a6b2f 100%);
+  box-shadow:0 0 14px rgba(217,179,91,0.5);
+  cursor:pointer;
+  animation:pulseGold 1.8s infinite;
+  transition:transform .18s ease;
 }
-
-.info-dot:hover{
-    transform:scale(1.18);
-}
-
+.info-dot:hover{transform:scale(1.18)}
 @keyframes pulseGold{
-    0%,100%{ transform:scale(1); box-shadow:0 0 10px rgba(217,179,91,0.35); }
-    50%{ transform:scale(1.2); box-shadow:0 0 18px rgba(217,179,91,0.65); }
+  0%,100%{transform:scale(1);box-shadow:0 0 10px rgba(217,179,91,0.35)}
+  50%{transform:scale(1.18);box-shadow:0 0 18px rgba(217,179,91,0.65)}
 }
-
-label{
-    display:block;
-    margin-top:10px;
-    margin-bottom:6px;
-    font-size:12px;
-    color:var(--muted);
-    letter-spacing:0.4px;
-}
-
-.input-box{
-    position:relative;
-}
-
-input, textarea{
-    width:100%;
-    padding:10px 12px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,0.12);
-    background:rgba(10,10,14,0.72);
-    color:var(--text);
-    outline:none;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
-    font-size:14px;
-}
-
-input:focus, textarea:focus{
-    border-color:rgba(217,179,91,0.55);
-    box-shadow:0 0 0 3px rgba(217,179,91,0.14);
-}
-
-textarea{
-    min-height:96px;
-    resize:vertical;
-}
-
 .eye{
-    position:absolute;
-    right:12px;
-    top:50%;
-    transform:translateY(-50%);
-    cursor:pointer;
-    color:var(--gold-2);
-    opacity:0.88;
-    font-size:14px;
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:var(--gold-2);
+  opacity:.9;
+  font-size:22px;
+  user-select:none;
 }
-
 #strengthBar{
-    height:8px;
-    background:rgba(255,255,255,0.08);
-    border-radius:999px;
-    margin-top:8px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,0.08);
+  height:10px;
+  background:rgba(255,255,255,0.08);
+  border-radius:999px;
+  margin-top:10px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.08);
 }
-
 #strengthFill{
-    height:100%;
-    width:0%;
-    border-radius:999px;
-    background:linear-gradient(90deg, #8a6b2f, var(--gold), var(--gold-2));
-    transition:width .3s ease, background .3s ease;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#8a6b2f,var(--gold),var(--gold-2));
+  transition:width .3s ease, background .3s ease;
 }
+#strengthText{margin-top:8px;font-size:14px;color:var(--muted)}
 
-#strengthText{
-    margin-top:6px;
-    font-size:12px;
-    color:var(--muted);
+.toast-wrap{
+  position:fixed;
+  left:50%;
+  top:14px;
+  transform:translateX(-50%);
+  z-index:10000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
 }
-
-.voice-row{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:6px;
-    margin-top:4px;
+.toast{
+  min-width:min(88vw,320px);
+  padding:9px 12px;
+  border-radius:13px;
+  background:rgba(10,10,14,.94);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 10px 22px rgba(0,0,0,.28);
+  color:var(--text);
+  font-size:12.5px;
+  line-height:1.25;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity .16s ease, transform .16s ease;
 }
-
-.voice-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    padding:8px 6px;
-    border-radius:999px;
-    border:1px solid rgba(255,215,130,0.3);
-    background:rgba(10,10,14,0.9);
-    color:var(--text);
-    font-size:12px;
-    cursor:pointer;
-    transition:background .18s ease, transform .18s ease, box-shadow .18s ease, opacity .18s ease;
-    min-height:38px;
-}
-
-.voice-btn:hover{
-    opacity:0.95;
-    transform:translateY(-1px);
-}
-
-.voice-btn.active{
-    background:linear-gradient(135deg, rgba(217,179,91,0.85), rgba(147,51,234,0.65));
-    color:#120b02;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.16), 0 10px 20px rgba(0,0,0,0.45);
-}
-
-.voice-btn.play-btn.reading{
-    background:linear-gradient(135deg, rgba(147,51,234,0.85), rgba(217,179,91,0.9));
-    color:#120b02;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.2), 0 0 18px rgba(217,179,91,0.7);
-    animation:voicePulse 1.2s ease-in-out infinite;
-}
-
-@keyframes voicePulse{
-    0%{ transform:translateY(0) scale(1); opacity:1; }
-    50%{ transform:translateY(-1px) scale(1.03); opacity:0.96; }
-    100%{ transform:translateY(0) scale(1); opacity:1; }
-}
-
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{border-color:rgba(156,255,191,.5);background:rgba(6,24,16,.96);color:#bdfdd2}
+.toast.err{border-color:rgba(255,80,120,.55);background:rgba(34,8,14,.96);color:#ffd1dc}
+.toast.info{border-color:rgba(217,179,91,.5);background:rgba(29,22,8,.96);color:#ffe7b0}
 #qrContainer{
-    margin-top:10px;
-    padding:8px;
-    border-radius:14px;
-    background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,215,130,0.14);
-    text-align:center;
+  margin-top:10px;
+  padding:10px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,215,130,0.14);
+  text-align:center;
 }
-
-#qrContainer:empty{
-    padding:0;
-    border:none;
-    background:transparent;
-}
-
+#qrContainer:empty{padding:0;border:none;background:transparent}
 #qr-reader{
-    width:100%;
-    margin-top:10px;
-    border-radius:14px;
-    overflow:hidden;
-    border:1px solid rgba(255,215,130,0.14);
+  width:100%;
+  margin-top:10px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,215,130,0.14);
 }
-
-/* Pulsanti */
-.btn-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:10px;
-}
-
-/* righe piccole 3 colonne */
-.small-row{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:8px;
-    margin-top:8px;
-}
-
+.btn-row,.small-row{display:grid;gap:12px}
+.btn-row{grid-template-columns:1fr 1fr;margin-top:10px}
+.small-row{grid-template-columns:repeat(2, 1fr);margin-top:12px}
+.small-row-2{grid-template-columns:repeat(2, 1fr)}
+.small-row-3{grid-template-columns:repeat(3, 1fr)}
+.small-row-4{grid-template-columns:repeat(2, 1fr)}
 button{
-    width:100%;
-    padding:10px 10px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    color:#1a1205;
-    font-weight:700;
-    letter-spacing:0.4px;
-    background:linear-gradient(180deg, var(--gold-2), var(--gold));
-    box-shadow:0 10px 24px rgba(217,179,91,0.22);
-    transition:transform .18s ease, filter .18s ease, box-shadow .18s ease, opacity .18s ease;
-    font-size:12px;
+  width:100%;
+  min-height:56px;
+  padding:14px 12px;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  color:#1a1205;
+  font-weight:800;
+  font-size:16px;
+  letter-spacing:.5px;
+  background:linear-gradient(180deg, var(--gold-2), var(--gold));
+  box-shadow:0 10px 24px rgba(217,179,91,0.22);
+  transition:transform .18s ease, filter .18s ease, box-shadow .18s ease, opacity .18s ease;
 }
-
-button:hover{
-    transform:translateY(-1px);
-    filter:brightness(1.03);
-    box-shadow:0 14px 28px rgba(217,179,91,0.28);
-}
-
-button:active{
-    transform:translateY(0);
-}
-
+button:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 14px 28px rgba(217,179,91,0.28)}
+button:active{transform:translateY(0)}
 .small-btn{
-    background:rgba(255,255,255,0.14);
-    color:var(--text);
-    border-radius:12px;
-    border:1px solid rgba(255,215,130,0.18);
-    box-shadow:none;
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    font-weight:600;
-    letter-spacing:0.15px;
+  background:rgba(255,255,255,0.16);
+  color:var(--text);
+  border:1px solid rgba(255,215,130,0.18);
+  box-shadow:none;
+  font-weight:600;
 }
-
-.small-btn:hover{
-    opacity:0.9;
-    box-shadow:0 8px 18px rgba(0,0,0,0.25);
+.small-btn:hover{opacity:.88;box-shadow:0 8px 18px rgba(0,0,0,0.25)}
+.footer-note{font-size:12px;opacity:.65;margin-top:10px;text-align:right}
+.easter-trigger{
+  cursor:pointer;
+  opacity:.78;
+  color:var(--text);
+  letter-spacing:.2px;
+  transition:opacity .18s ease, transform .18s ease;
+  user-select:none;
 }
-
+.easter-trigger:hover{opacity:1;transform:translateY(-1px)}
 #securityPopup{
-    display:none;
-    position:fixed;
-    inset:0;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.72);
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    z-index:9999;
+  display:none;
+  position:fixed;
+  inset:0;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.72);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:9999;
 }
-
 .securityBox{
-    width:min(92vw, 340px);
-    padding:18px;
-    border-radius:18px;
-    background:rgba(15,15,20,0.86);
-    border:1px solid rgba(255,215,130,0.26);
-    box-shadow:0 18px 60px rgba(0,0,0,0.5);
-    color:var(--text);
+  width:min(92vw, 380px);
+  padding:22px;
+  border-radius:20px;
+  background:rgba(15,15,20,0.82);
+  border:1px solid rgba(255,215,130,0.26);
+  box-shadow:0 18px 60px rgba(0,0,0,0.5);
+  color:var(--text);
+  font-size:16px;
 }
-
 .terminal-mode{
-    background:#050505 !important;
-    color:#d7ffcb !important;
-    font-family:"Courier New",monospace;
+  background:#050505 !important;
+  color:#d7ffcb !important;
+  font-family:"Courier New",monospace;
+  animation:terminalFlash .45s ease-out;
 }
-
-.terminal-mode input,
-.terminal-mode textarea{
-    background:#000;
-    color:#00ff88;
-    border:1px solid #00ff88;
+.terminal-mode input,.terminal-mode textarea{
+  background:#000;
+  color:#00ff88;
+  border:1px solid #00ff88;
 }
-
 .terminal-mode button{
-    background:transparent;
-    color:#9cffbf;
-    border:1px solid rgba(156,255,191,0.4);
-    box-shadow:none;
+  background:transparent;
+  color:#9cffbf;
+  border:1px solid rgba(156,255,191,0.4);
+  box-shadow:none;
 }
-
 .terminal-mode .container{
-    background:#000;
-    border-color:rgba(90,255,160,0.25);
-    box-shadow:0 0 24px rgba(90,255,160,0.12);
-    backdrop-filter:none;
+  background:#000;
+  border-color:rgba(90,255,160,0.25);
+  box-shadow:0 0 24px rgba(90,255,160,0.12);
+  backdrop-filter:none;
 }
-
-.footer-note{
-    font-size:10px;
-    opacity:0.6;
-    margin-top:8px;
-    text-align:right;
+.terminal-mode .info-dot{
+  background:#9cffbf;
+  box-shadow:0 0 14px rgba(156,255,191,0.55);
 }
-
-@media (max-width: 420px){
-    .container{
-        width:96vw;
-        padding:12px;
-        border-radius:16px;
-    }
-
-    .title-bar h2{
-        font-size:17px;
-    }
-
-    .voice-row{
-        grid-template-columns:repeat(4, 1fr);
-        gap:5px;
-    }
-
-    textarea{
-        min-height:88px;
-    }
+.terminal-mode-flash .container{animation:terminalPulse .22s ease-out}
+@keyframes terminalPulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.01)}
+  100%{transform:scale(1)}
 }
-
-@media (max-width: 360px){
-    .voice-row{
-        grid-template-columns:repeat(2, 1fr);
-    }
+@media (max-width:480px){
+  body{padding:8px}
+  .container{padding:10px;border-radius:20px}
+  .title-bar{margin-bottom:10px}
+  .title-bar h2{font-size:24px}
+  input,textarea{font-size:17px;padding:14px}
+  label{font-size:14px;margin-top:8px;margin-bottom:4px}
+  textarea{min-height:160px}
+  .btn-row{grid-template-columns:1fr 1fr;margin-top:8px;gap:8px}
+  .small-row{grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .small-row-2{grid-template-columns:1fr 1fr}
+  .small-row-3{grid-template-columns:repeat(3, 1fr)}
+  .small-row-4{grid-template-columns:1fr 1fr}
+  button{min-height:50px;font-size:15px}
+  #qrContainer{margin-top:8px}
+  #qr-reader{margin-top:8px}
+  .footer-note{margin-top:6px}
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
-    <div class="title-bar">
-        <h2>ENigma³</h2>
-        <div class="info-dot" onclick="toggleSecurityPopup()"></div>
-    </div>
-
-    <label>Password</label>
-    <div class="input-box">
-        <input type="password" id="key">
-        <span class="eye" onclick="togglePass()">👁</span>
-    </div>
-
-    <div id="strengthBar">
-        <div id="strengthFill"></div>
-    </div>
-    <div id="strengthText"></div>
-
-    <label>Text</label>
-    <textarea id="message"></textarea>
-
-    <label style="margin-top:6px;">Voice</label>
-    <div class="voice-row">
-        <button type="button" class="voice-btn" data-lang="it-IT" onclick="setVoiceLang('it-IT')">
-            <span>🇮🇹</span><span>IT</span>
-        </button>
-        <button type="button" class="voice-btn" data-lang="de-DE" onclick="setVoiceLang('de-DE')">
-            <span>🇩🇪</span><span>DE</span>
-        </button>
-        <button type="button" class="voice-btn" data-lang="en-US" onclick="setVoiceLang('en-US')">
-            <span>🇬🇧</span><span>EN</span>
-        </button>
-        <button id="readBtn" type="button" class="voice-btn play-btn" onclick="readText()">
-            <span>▶</span><span>PLAY</span>
-        </button>
-    </div>
-
-    <div id="qrContainer"></div>
-
-    <!-- ENCRYPT / DECRYPT -->
-    <div class="btn-row">
-        <button onclick="encrypt()">ENCRYPT</button>
-        <button onclick="decrypt()">DECRYPT</button>
-    </div>
-
-    <!-- 1. Copy text - Download Text - Send Text -->
-    <div class="small-row">
-        <button class="small-btn" onclick="copyText()">COPY TEXT</button>
-        <button class="small-btn" onclick="exportFile()">DOWNLOAD TEXT</button>
-        <button class="small-btn" onclick="shareText()">SEND TEXT</button>
-    </div>
-
-    <!-- 2. Scan QR - Gen QR - Download QR -->
-    <div class="small-row">
-        <button class="small-btn" id="scanBtn" onclick="startQRScan()">SCAN QR</button>
-        <button class="small-btn" onclick="generateQR()">GEN QR</button>
-        <button class="small-btn" onclick="saveQR()">DOWNLOAD QR</button>
-    </div>
-
-    <!-- 3. Reset - Terminal - Gen PW -->
-    <div class="small-row">
-        <button class="small-btn" onclick="clearAll()">RESET</button>
-        <button class="small-btn" onclick="toggleTerminal()">TERMINAL</button>
-        <button class="small-btn" onclick="generatePassword()">GEN PW</button>
-    </div>
-
-    <div id="qr-reader"></div>
-
-    <div class="footer-note">
-        ENigma³ secure QR 2026
-    </div>
+  <div class="title-bar">
+    <h2>Enigma³</h2>
+    <div class="info-dot" onclick="toggleSecurityPopup()"></div>
+  </div>
+  <label>Password</label>
+  <div class="input-box">
+    <input type="password" id="key" autocomplete="new-password" inputmode="text">
+    <span class="eye" onclick="togglePass()">👁</span>
+  </div>
+  <div id="strengthBar"><div id="strengthFill"></div></div>
+  <div id="strengthText"></div>
+  <label>Text</label>
+  <textarea id="message"></textarea>
+  <div id="qrContainer"></div>
+  <div class="btn-row">
+    <button onclick="encrypt()">ENCRYPT</button>
+    <button onclick="decrypt()">DECRYPT</button>
+  </div>
+  <div class="small-row small-row-2">
+    <button class="small-btn" onclick="copyText()">COPY TEXT</button>
+    <button class="small-btn" onclick="exportFile()">EXPORT TEXT</button>
+  </div>
+  <div class="small-row small-row-3">
+    <button id="scanBtn" class="small-btn" onclick="startQRScan()">🔎 QR</button>
+    <button class="small-btn" onclick="generateQR()">➕QR</button>
+    <button class="small-btn" onclick="saveQR()">⬇️QR</button>
+  </div>
+  <div class="small-row small-row-4">
+    <button class="small-btn" onclick="generatePassword()">GEN PW</button>
+    <button class="small-btn" onclick="clearAll()">RESET</button>
+  </div>
+  <div id="qr-reader"></div>
+  <div class="footer-note">
+    Enigma³ secure QR • © 2026 <span class="easter-trigger" onclick="toggleTerminal()">Enzo Notari</span> 
+  </div>
 </div>
-
+<div class="toast-wrap" id="toastWrap"></div>
 <div id="securityPopup" onclick="toggleSecurityPopup()">
-    <div class="securityBox" onclick="event.stopPropagation()">
-        <h3>🧠 REAL SECURITY</h3>
-        <p>
-        ✔ AES-GCM 256-bit<br>
-        ✔ PBKDF2 120k iterations<br>
-        ✔ Random salt<br>
-        ✔ Random IV
-        </p>
-    </div>
+  <div class="securityBox" onclick="event.stopPropagation()">
+    <h3>🧠 REAL SECURITY</h3>
+    <p>✔ AES-GCM 256-bit<br>✔ PBKDF2 120k iterations<br>✔ Random salt<br>✔ Random IV</p>
+  </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register("./sw.js")
-      .then(function(reg) {
-        console.log("Service worker registered", reg.scope);
-      })
-      .catch(function(err) {
-        console.error("SW registration failed:", err);
-      });
-  });
-}
-</script>
 <script>
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
-/* QR GENERATE */
+function showToast(message, type='ok'){
+  const wrap=document.getElementById('toastWrap');
+  if(!wrap) return;
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.textContent=message;
+  wrap.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),160)},1800);
+}
+
 function generateQR(){
-    const data = document.getElementById("message").value;
-    if(!data){
-        alert("Nessun dato da convertire");
-        return;
-    }
-
-    const container = document.getElementById("qrContainer");
-    container.innerHTML = "";
-
-    new QRCode(container, {
-        text: data,
-        width: 180,
-        height: 180,
-        correctLevel: QRCode.CorrectLevel.H
-    });
+  const data=document.getElementById('message').value;
+  if(!data){showToast('No data to convert','err');return}
+  if(data.length>500){showToast('Max 500 characters for QR','err');return}
+  const container=document.getElementById('qrContainer');
+  container.innerHTML='';
+  new QRCode(container,{text:data,width:220,height:220,correctLevel:QRCode.CorrectLevel.H});
+  showToast('QR generated ✔','ok');
 }
 
-/* QR SCAN */
-let qrScanner;
-let qrScanning = false;
-
+let qrScanner;let qrScanning=false;
 async function startQRScan(){
-    const reader = document.getElementById("qr-reader");
-    const scanBtn = document.getElementById("scanBtn");
-
-    if(qrScanner && qrScanning){
-        try{
-            await qrScanner.stop();
-            await qrScanner.clear();
-        }catch(e){
-            console.warn("Error stopping QR scanner", e);
+  const reader=document.getElementById('qr-reader');
+  const scanBtn=document.getElementById('scanBtn');
+  if(qrScanner&&qrScanning){
+    try{await qrScanner.stop();await qrScanner.clear()}catch(e){}
+    qrScanning=false;
+    reader.innerHTML='';
+    if(scanBtn)scanBtn.textContent='🔎 QR';
+    showToast('QR scanner stopped','info');
+    return;
+  }
+  if(!qrScanner){qrScanner=new Html5Qrcode('qr-reader')}
+  Html5Qrcode.getCameras().then(devices=>{
+    if(devices&&devices.length){
+      qrScanner.start(
+        {facingMode:'environment'},
+        {fps:10,qrbox:220},
+        decodedText=>{
+          document.getElementById('message').value=decodedText;
+          qrScanner.stop().then(()=>{
+            qrScanner.clear();
+            qrScanning=false;
+            if(scanBtn)scanBtn.textContent='🔎 QR';
+            showToast('QR captured ✔','ok');
+          }).catch(()=>{});
         }
-        qrScanning = false;
-        reader.innerHTML = "";
-        if(scanBtn) scanBtn.textContent = "SCAN QR";
-        return;
+      ).then(()=>{
+        qrScanning=true;
+        if(scanBtn)scanBtn.textContent='STOP SCAN';
+        showToast('Scanner active','info');
+      }).catch(err=>{
+        console.error('Unable to start QR scanner',err);
+        showToast('Unable to start QR scanner','err');
+      });
     }
-
-    if(!qrScanner){
-        qrScanner = new Html5Qrcode("qr-reader");
-    }
-
-    Html5Qrcode.getCameras().then(devices => {
-        if(devices && devices.length){
-            qrScanner.start(
-                { facingMode: "environment" },
-                {
-                    fps: 10,
-                    qrbox: 200
-                },
-                (decodedText) => {
-                    document.getElementById("message").value = decodedText;
-
-                    qrScanner.stop().then(() => {
-                        qrScanner.clear();
-                        qrScanning = false;
-                        if(scanBtn) scanBtn.textContent = "SCAN QR";
-                        alert("QR acquisito ✔");
-                    }).catch(err => {
-                        console.warn("Error stopping QR after scan", err);
-                    });
-                }
-            ).then(() => {
-                qrScanning = true;
-                if(scanBtn) scanBtn.textContent = "STOP SCAN";
-            }).catch(err => {
-                console.error("Unable to start QR scanner", err);
-            });
-        }
-    }).catch(err => {
-        console.error("Unable to access cameras", err);
-    });
+  }).catch(err=>{
+    console.error('Unable to access cameras',err);
+    showToast('Unable to access cameras','err');
+  });
 }
 
-/* TERMINAL */
 function toggleTerminal(){
-    document.body.classList.toggle("terminal-mode");
+  const on=document.body.classList.contains('terminal-mode');
+  if(on){
+    document.body.classList.remove('terminal-mode');
+    return;
+  }
+  document.body.classList.add('terminal-mode');
+  document.body.classList.add('terminal-mode-flash');
+  setTimeout(()=>document.body.classList.remove('terminal-mode-flash'),220);
 }
 
-/* PASS EYE */
 function togglePass(){
-    const i = document.getElementById("key");
-    i.type = i.type === "password" ? "text" : "password";
+  const i=document.getElementById('key');
+  i.type=i.type==='password'?'text':'password';
 }
 
-/* POPUP */
 function toggleSecurityPopup(){
-    const p = document.getElementById("securityPopup");
-    if(p.style.display !== "flex"){
-        p.style.display = "flex";
-    } else {
-        p.style.display = "none";
-    }
+  const p=document.getElementById('securityPopup');
+  p.style.display=p.style.display!=='flex'?'flex':'none';
 }
 
-/* STRENGTH */
-document.getElementById("key").addEventListener("input", updateStrength);
+document.getElementById('key').addEventListener('input', updateStrength);
 
 function updateStrength(){
-    const v = document.getElementById("key").value;
-    const bar = document.getElementById("strengthFill");
-    const txt = document.getElementById("strengthText");
-
-    if(!v){
-        bar.style.width = "0%";
-        txt.innerText = "";
-        return;
-    }
-
-    let charset = 0;
-    if(/[a-z]/.test(v)) charset += 26;
-    if(/[A-Z]/.test(v)) charset += 26;
-    if(/[0-9]/.test(v)) charset += 10;
-    if(/[^A-Za-z0-9]/.test(v)) charset += 33;
-
-    const entropy = v.length * Math.log2(charset || 1);
-
-    const levels = ["Weak","OK","Good","Strong","HIGH"];
-    const colors = ["#ff0040","#ff8800","#ffcc00","#00ffcc","#00ff88"];
-
-    let score = 0;
-    if(entropy > 30) score = 1;
-    if(entropy > 50) score = 2;
-    if(entropy > 70) score = 3;
-    if(entropy > 90) score = 4;
-
-    bar.style.width = Math.min(entropy, 100) + "%";
-    bar.style.background = colors[score];
-    txt.innerText = `${levels[score]} • ${Math.round(entropy)} bits`;
+  const v=document.getElementById('key').value;
+  const bar=document.getElementById('strengthFill');
+  const txt=document.getElementById('strengthText');
+  if(!v){
+    bar.style.width='0%';
+    txt.innerText='';
+    return;
+  }
+  let charset=0;
+  if(/[a-z]/.test(v))charset+=26;
+  if(/[A-Z]/.test(v))charset+=26;
+  if(/[0-9]/.test(v))charset+=10;
+  if(/[^A-Za-z0-9]/.test(v))charset+=33;
+  const entropy=v.length*Math.log2(charset||1);
+  const levels=['Weak','OK','Good','Strong','HIGH'];
+  const colors=['#ff0040','#ff8800','#ffcc00','#00ffcc','#00ff88'];
+  let score=0;
+  if(entropy>30)score=1;
+  if(entropy>50)score=2;
+  if(entropy>70)score=3;
+  if(entropy>90)score=4;
+  bar.style.width=Math.min(entropy,100)+'%';
+  bar.style.background=colors[score];
+  txt.innerText=`${levels[score]} • ${Math.round(entropy)} bits`;
 }
 
-document.getElementById("message").addEventListener("input", function(){
-    document.getElementById("qrContainer").innerHTML = "";
+document.getElementById('message').addEventListener('input',()=>{
+  document.getElementById('qrContainer').innerHTML='';
 });
 
-/* CRYPTO HELPER */
 function bufToBase64(buf){
-    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
 }
-
 function base64ToBuf(b64){
-    return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 }
 
-async function deriveKey(password, salt){
-    const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        enc.encode(password),
-        { name: "PBKDF2" },
-        false,
-        ["deriveKey"]
-    );
-
-    return crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: salt,
-            iterations: 120000,
-            hash: "SHA-256"
-        },
-        keyMaterial,
-        {
-            name: "AES-GCM",
-            length: 256
-        },
-        false,
-        ["encrypt", "decrypt"]
-    );
+async function deriveKey(password,salt){
+  const keyMaterial=await crypto.subtle.importKey('raw',enc.encode(password),{name:'PBKDF2'},false,['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt,iterations:120000,hash:'SHA-256'},
+    keyMaterial,
+    {name:'AES-GCM',length:256},
+    false,
+    ['encrypt','decrypt']
+  );
 }
 
 async function encrypt(){
-    const msg = document.getElementById("message").value;
-    const password = document.getElementById("key").value;
-
-    if(!msg || !password){
-        alert("Insert Text and Password");
-        return;
-    }
-
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const key = await deriveKey(password, salt);
-
-    const encrypted = await crypto.subtle.encrypt(
-        {
-            name: "AES-GCM",
-            iv: iv
-        },
-        key,
-        enc.encode(msg)
-    );
-
-    const combined = new Uint8Array(
-        salt.length + iv.length + encrypted.byteLength
-    );
-
-    combined.set(salt, 0);
-    combined.set(iv, salt.length);
-    combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-
-    document.getElementById("message").value = bufToBase64(combined);
-    alert("✔ text encrypted");
+  const msg=document.getElementById('message').value;
+  const password=document.getElementById('key').value;
+  if(!msg||!password){showToast('Enter Text and Password','err');return}
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(password,salt);
+  const encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(msg));
+  const combined=new Uint8Array(salt.length+iv.length+encrypted.byteLength);
+  combined.set(salt,0);
+  combined.set(iv,salt.length);
+  combined.set(new Uint8Array(encrypted),salt.length+iv.length);
+  document.getElementById('message').value=bufToBase64(combined);
+  showToast('Text encrypted ✔','ok');
 }
 
 async function decrypt(){
-    const data = document.getElementById("message").value;
-    const password = document.getElementById("key").value;
-
-    if(!data || !password){
-        alert("Insert a password");
-        return;
-    }
-
-    try{
-        const combined = base64ToBuf(data);
-        const salt = combined.slice(0, 16);
-        const iv = combined.slice(16, 28);
-        const ciphertext = combined.slice(28);
-
-        const key = await deriveKey(password, salt);
-
-        const decrypted = await crypto.subtle.decrypt(
-            {
-                name: "AES-GCM",
-                iv: iv
-            },
-            key,
-            ciphertext
-        );
-
-        document.getElementById("message").value = dec.decode(decrypted);
-        alert("✔ Text decrypted");
-    }catch(e){
-        alert("Wrong Password or data corrupted");
-    }
+  const data=document.getElementById('message').value;
+  const password=document.getElementById('key').value;
+  if(!data||!password){showToast('Enter a password','err');return}
+  try{
+    const combined=base64ToBuf(data);
+    const salt=combined.slice(0,16);
+    const iv=combined.slice(16,28);
+    const ciphertext=combined.slice(28);
+    const key=await deriveKey(password,salt);
+    const decrypted=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ciphertext);
+    document.getElementById('message').value=dec.decode(decrypted);
+    showToast('Text decrypted ✔','ok');
+  }catch(e){
+    showToast('Wrong Password or data corrupted','err');
+  }
 }
 
-/* TTS */
-let isReading = false;
-let cachedVoices = [];
-let currentLang = "en-US";
-
-function loadVoices(){
-    return new Promise(resolve => {
-        if(!("speechSynthesis" in window)){
-            resolve([]);
-            return;
-        }
-
-        let voices = window.speechSynthesis.getVoices();
-        if(voices.length){
-            cachedVoices = voices;
-            resolve(voices);
-            return;
-        }
-
-        window.speechSynthesis.onvoiceschanged = () => {
-            voices = window.speechSynthesis.getVoices();
-            cachedVoices = voices;
-            resolve(voices);
-        };
-    });
-}
-
-function setVoiceLang(lang){
-    currentLang = lang;
-    document.querySelectorAll(".voice-btn").forEach(btn => {
-        if(btn.dataset.lang){
-            btn.classList.toggle("active", btn.dataset.lang === lang);
-        }
-    });
-}
-
-async function readText(){
-    const btn = document.getElementById("readBtn");
-    const text = document.getElementById("message").value.trim();
-
-    if(!("speechSynthesis" in window)){
-        alert("Text-to-speech not supported in this browser");
-        return;
-    }
-
-    if(isReading){
-        window.speechSynthesis.cancel();
-        isReading = false;
-        if(btn){
-            btn.innerHTML = "<span>▶</span><span>PLAY</span>";
-            btn.classList.remove("reading");
-        }
-        return;
-    }
-
-    if(!text){
-        alert("No text to read");
-        return;
-    }
-
-    await loadVoices();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = currentLang;
-
-    const voice =
-        cachedVoices.find(v => v.lang === currentLang) ||
-        cachedVoices.find(v => v.lang && v.lang.startsWith(currentLang.split("-")[0]));
-
-    if(voice){
-        utterance.voice = voice;
-    }
-
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    utterance.onend = function(){
-        isReading = false;
-        if(btn){
-            btn.innerHTML = "<span>▶</span><span>PLAY</span>";
-            btn.classList.remove("reading");
-        }
-    };
-
-    utterance.onerror = function(){
-        isReading = false;
-        if(btn){
-            btn.innerHTML = "<span>▶</span><span>PLAY</span>";
-            btn.classList.remove("reading");
-        }
-    };
-
-    isReading = true;
-    if(btn){
-        btn.innerHTML = "<span>■</span><span>STOP</span>";
-        btn.classList.add("reading");
-    }
-
-    window.speechSynthesis.speak(utterance);
-}
-
-/* SHARE TEXT (Web Share API + fallback) */
-async function shareText(){
-    const text = document.getElementById("message").value.trim();
-    if(!text){
-        alert("No text to send");
-        return;
-    }
-
-    // copia comunque negli appunti
-    try{
-        if(navigator.clipboard?.writeText){
-            await navigator.clipboard.writeText(text);
-        }
-    }catch(e){
-        console.warn("Clipboard error", e);
-    }
-
-    if(navigator.share){
-        try{
-            await navigator.share({
-                title: "ENigma³ text",
-                text: text
-            }); // usa Web Share API nativa [web:44][web:52]
-        }catch(e){
-            console.warn("Share cancelled or failed", e);
-        }
-    }else{
-        alert("Text copied. Share it in WhatsApp / email");
-    }
-}
-
-/* HELPERS */
 function copyText(){
-    navigator.clipboard?.writeText(document.getElementById("message").value || "");
+  navigator.clipboard.writeText(document.getElementById('message').value)
+    .then(()=>showToast('Text copied ✔','ok'))
+    .catch(()=>showToast('Copy failed','err'));
 }
 
 function clearAll(){
-    document.getElementById("message").value = "";
-    document.getElementById("qrContainer").innerHTML = "";
+  document.getElementById('message').value='';
+  document.getElementById('qrContainer').innerHTML='';
+  showToast('Reset done','ok');
 }
 
 function generatePassword(){
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%";
-    let p = "";
-    for(let i = 0; i < 14; i++){
-        p += chars[Math.floor(Math.random() * chars.length)];
-    }
-    document.getElementById("key").value = p;
-    updateStrength();
+  const chars='!@#$%ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+  let p='';
+  for(let i=0;i<19;i++)p+=chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('key').value=p;
+  updateStrength();
+  showToast('Password generated ✔','ok');
 }
 
 function saveQR(){
-    const container = document.getElementById("qrContainer");
-    const img = container.querySelector("img");
-    const canvas = container.querySelector("canvas");
-
-    let dataURL;
-
-    if(img){
-        dataURL = img.src;
-    } else if(canvas){
-        dataURL = canvas.toDataURL("image/png");
-    } else {
-        alert("Nessun QR da salvare");
-        return;
-    }
-
-    const a = document.createElement("a");
-    a.href = dataURL;
-    a.download = "ENigma_QR.png";
-    a.click();
+  const container=document.getElementById('qrContainer');
+  const img=container.querySelector('img');
+  const canvas=container.querySelector('canvas');
+  let dataURL;
+  if(img){dataURL=img.src}
+  else if(canvas){dataURL=canvas.toDataURL('image/png')}
+  else{showToast('No QR to save','err');return}
+  const a=document.createElement('a');
+  a.href=dataURL;
+  a.download='Enigma_QR.png';
+  a.click();
+  showToast('QR downloaded ✔','ok');
 }
 
 function exportFile(){
-    const data = document.getElementById("message").value;
-
-    if(!data){
-        alert("Data missing");
-        return;
-    }
-
-    const blob = new Blob([data], { type: "text/plain" });
-    const a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-    a.download = "EN3_mess.txt";
-    a.click();
+  const data=document.getElementById('message').value;
+  if(!data){showToast('Data missing','err');return}
+  const blob=new Blob([data],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='EN³_mess.txt';
+  a.click();
+  showToast('Text exported ✔','ok');
 }
-
-/* default voice */
-setVoiceLang("en-US");
 </script>
-
 </body>
 </html>
