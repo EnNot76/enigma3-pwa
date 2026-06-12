@@ -239,6 +239,60 @@ button:active{transform:translateY(0)}
   transition:opacity .18s ease, transform .18s ease;
   user-select:none;
 }
+
+/* Effetto luce sul titolo */
+.shine-title{
+  position:relative;
+  display:inline-block;
+  background:linear-gradient(
+    120deg,
+    #f5f2ea 0%,
+    #f3dd9b 20%,
+    #caa55a 40%,
+    #8d6a2f 60%,
+    #f7e4a6 80%,
+    #f5f2ea 100%
+  );
+  background-size:200% 100%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:titleShine 8s linear infinite;
+}
+
+@keyframes titleShine{
+  0%{background-position:0% 0;}
+  50%{background-position:100% 0;}
+  100%{background-position:0% 0;}
+}
+
+.footer-note{
+  position:relative;
+  font-size:12px;
+  opacity:.65;
+  margin-top:10px;
+  text-align:right;
+  letter-spacing:.4px;
+  overflow:hidden;
+}
+
+.footer-note::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-40%;
+  width:40%;
+  height:100%;
+  background:linear-gradient(
+    110deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.8) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  opacity:0;
+  transform:skewX(-20deg);
+  pointer-events:none;
+}
+
 .easter-trigger:hover{opacity:1;transform:translateY(-1px)}
 #securityPopup{
   display:none;
@@ -316,10 +370,10 @@ button:active{transform:translateY(0)}
 </head>
 <body>
 <div class="container">
-  <div class="title-bar">
-    <h2>Enigma³ mobile</h2>
-    <div class="info-dot" onclick="toggleSecurityPopup()"></div>
-  </div>
+<div class="title-bar">
+  <h2 class="shine-title">Enigma³ mobile</h2>
+  <div class="info-dot" onclick="toggleSecurityPopup()"></div>
+</div>
   <label>Password</label>
   <div class="input-box">
     <input type="password" id="key" autocomplete="new-password" inputmode="text">
@@ -349,9 +403,9 @@ button:active{transform:translateY(0)}
     <button class="small-btn" onclick="clearAll()">RESET</button>
   </div>
   <div id="qr-reader"></div>
-  <div class="footer-note">
-    Enigma³ Mobile QR • © 2026 <span class="easter-trigger" onclick="toggleTerminal()">Enzo Notari</span>
-  </div>
+<div class="footer-note shine-line">
+  Enigma³ Mobile QR • © 2026 <span class="easter-trigger" onclick="toggleTerminal()">Enzo Notari</span>
+</div>
 </div>
 <div class="toast-wrap" id="toastWrap"></div>
 <div id="securityPopup" onclick="toggleSecurityPopup()">
